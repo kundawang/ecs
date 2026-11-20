@@ -27,6 +27,13 @@
 // [DefaultEntityManager.FilterByMask] while 64 component types are enough,
 // and [DefaultEntityManager.FilterByNames] when they are not.
 //
+// When a system's structural changes must not leak into the rest of the
+// frame — an enemy dies and spawns a drop, and the systems after it should
+// see neither — hand the engine a [BufferedEntityManager] instead. Its
+// writes queue into a [CommandBuffer] while its reads keep showing the
+// pre-commit view, and Commit applies the queue, in order, when the frame
+// ends.
+//
 // Nothing here is safe for concurrent use. The engine calls one system after
 // another on one goroutine, so systems need no locking between themselves. A
 // system that fans its own work out to goroutines owns the locking for that.
